@@ -1,7 +1,7 @@
 extends ./assets/pugs/_layout.pug
 
 mixin list(listTitle,test)
-  .col-4
+  .col-4.ticket-table.bg-light
     h3 #{listTitle}
     div #{test}
 
@@ -9,15 +9,19 @@ block vars
   include ./assets/pugs/_config.pug
   - var key = "top"
   - var page = pages[key]
-
+block header 
+  .header.sticky-top
+    h2 #{page.title}
+    h1=message
 block contents
-  h2 #{page.title}
-  h1=message
+  -var sample = "test"
     section.row.board
       +list("bb","c")
       +list("cc","d")
       +list("dd")
       +list("ff")
+  include ./css/index.pug
   include ./include/_script.pug
+
   script.
     ticketMounted()
