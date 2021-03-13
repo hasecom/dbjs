@@ -1,0 +1,7 @@
+script.
+  console.log("a");
+  function ticketMounted(){
+      $.ajax({url: "./api", success: function(res){
+      console.log(res);
+    }});
+  }
