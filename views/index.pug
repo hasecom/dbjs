@@ -1,9 +1,13 @@
 extends ./assets/pugs/_layout.pug
 
 mixin list(listTitle,test)
-  .col-4.ticket-table.bg-light
+  .col-4.ticket-table.bg-light.border.mx-1.rounded
     h3 #{listTitle}
-    div #{test}
+    ul.list-group
+      li.list-group-item.my-1.rounded.shadow-sm.pointer aa
+      li.list-group-item.my-1.rounded.shadow-sm.pointer  affa
+      li.list-group-item.my-1.rounded.shadow-sm.pointer  afewf
+      li.list-group-item.my-1.rounded.shadow-sm.pointer  aaa
 
 block vars
   include ./assets/pugs/_config.pug
@@ -15,12 +19,12 @@ block header
     h1=message
 block contents
   -var sample = "test"
-    section.row.board
+    section.board.row
       +list("bb","c")
       +list("cc","d")
       +list("dd")
       +list("ff")
-  include ./css/index.pug
+  include ./css/css.pug
   include ./include/_script.pug
 
   script.
