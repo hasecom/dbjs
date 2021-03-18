@@ -1,7 +1,18 @@
 script.
-  console.log("a");
   function ticketMounted(){
-      $.ajax({url: "./api", success: function(res){
-      console.log(res);
-    }});
+
+      $.ajax({
+        url: "get/ticket_type",
+        type:"POST"
+      })
+        .then(
+          // 1つめは通信成功時のコールバック
+          function (data) {
+            console.log(data);
+            },
+          function (error) {
+              console.log(error)
+            }
+        );
   }
+  

@@ -1,0 +1,7 @@
+export class TICKET_TYPE {
+  constructor(ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE) {
+    this.ID = ID
+    this.TICKET_TYPE_NAME = TICKET_TYPE_NAME
+    this.TICKET_TYPE_CODE = TICKET_TYPE_CODE
+  }
+}

@@ -1,11 +1,19 @@
 const express = require('express')
 const app = express()
-var sqlite3 = require('sqlite3')
-
+const db = require("./app/database.js");
 app.set("view engine", "pug")
-app.get('/', (req, res) => {
-  res.render("index",{title:"index",message:"hello there "})
+app.get('/', (req, res) => { 
+  res.render("index",{title:"index",message:"hello there"}) 
 });
+
+
+app.post('/get/ticket_type', async(req, res) => {
+  res.send(await db.select("SELECT ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE FROM TICKET_TYPE"));
+  res.end();
+});
+
+//テーブル確認 PRAGMA TABLE_INFO("table name")
+
 
 app.get('/api',(req,res) => {
   res.write("{aaa}");
