@@ -1,13 +1,13 @@
 extends ./assets/pugs/_layout.pug
 
-mixin list(listTitle,test)
+mixin list(listTitle,attrId)
   .col-4.ticket-table.bg-light.border.mx-1.rounded
-    h3 #{listTitle}
+    h3(id=attrId) #{listTitle}
     ul.list-group
       li.list-group-item.my-1.rounded.shadow-sm.pointer aa
-      li.list-group-item.my-1.rounded.shadow-sm.pointer  affa
-      li.list-group-item.my-1.rounded.shadow-sm.pointer  afewf
-      li.list-group-item.my-1.rounded.shadow-sm.pointer  aaa
+      li.list-group-item.my-1.rounded.shadow-sm.pointer affa
+      li.list-group-item.my-1.rounded.shadow-sm.pointer afewf
+      li.list-group-item.my-1.rounded.shadow-sm.pointer aaa
 block vars
   include ./assets/pugs/_config.pug
   - var key = "top"
@@ -19,9 +19,8 @@ block header
     h1=message
 block contents
   -var sample = "test"
-
-    section.board.row
-      +list("bb","c")
+    section#board.board.row
+      +list("bb","a")
       +list("cc","d")
       +list("dd")
       +list("ff")
@@ -29,15 +28,12 @@ block contents
   include ./include/_script.pug
   p=test
   script.
-    ticketMounted()
-
-    function aaaa(){
-      console.log("bb")
-      $.ajax({
-        url: "aaa",
-        type:'POST',
-        success: function(res){
-          
-      }
-    });
+    var ccc = (data)=>{
+      var newElement = document.createElement("div");
+      var newContent = document.createTextNode("jjj");
+      newElement.appendChild(newContent);
+      newElement.setAttribute("class","col-4 ticket-table bg-light border mx-1 rounded");
+      var parentDiv = document.getElementById("board");
+      parentDiv.appendChild(newElement);
     }
+    ticketMounted(ccc);

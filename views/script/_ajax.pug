@@ -1,5 +1,5 @@
 script.
-  function ticketMounted(){
+  function ticketMounted(fnc){
 
       $.ajax({
         url: "get/ticket_type",
@@ -8,7 +8,7 @@ script.
         .then(
           // 1つめは通信成功時のコールバック
           function (data) {
-            console.log(data);
+            fnc(data);
             },
           function (error) {
               console.log(error)
