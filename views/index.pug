@@ -20,20 +20,16 @@ block header
 block contents
   -var sample = "test"
     section#board.board.row
-      +list("bb","a")
-      +list("cc","d")
-      +list("dd")
-      +list("ff")
+
   include ./css/css.pug
   include ./include/_script.pug
   p=test
   script.
     var ccc = (data)=>{
-      var newElement = document.createElement("div");
-      var newContent = document.createTextNode("jjj");
-      newElement.appendChild(newContent);
-      newElement.setAttribute("class","col-4 ticket-table bg-light border mx-1 rounded");
-      var parentDiv = document.getElementById("board");
-      parentDiv.appendChild(newElement);
+      data.TICKET_TYPE.forEach(el=>{
+        var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","") //タイトル
+        var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded")
+        document.getElementById("board").appendChild(sectionEl);
+      })
     }
     ticketMounted(ccc);

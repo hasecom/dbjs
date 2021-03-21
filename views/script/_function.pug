@@ -1,0 +1,9 @@
+script.
+  //要素,中に入れる要素,id,class  -戻り値：作成した要素
+  function _createdElement(el,pEl,_id,_class){
+        var newElement = document.createElement(el);
+        newElement.append(pEl);
+        newElement.setAttribute("id",_id);
+        newElement.setAttribute("class",_class);
+        return newElement;
+  }
