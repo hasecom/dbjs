@@ -12,7 +12,7 @@ app.post('/get/mounted', async(req, res) => {
   var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,UPDATED_AT,CREATED_AT FROM TICKETS");
   res.send({
     "TICKET_TYPE":ticket_type,
-    "TICKET":tickets
+    "TICKETS":tickets
   });
   res.end();
 });

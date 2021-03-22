@@ -1,13 +1,4 @@
 extends ./assets/pugs/_layout.pug
-
-mixin list(listTitle,attrId)
-  .col-4.ticket-table.bg-light.border.mx-1.rounded
-    h3(id=attrId) #{listTitle}
-    ul.list-group
-      li.list-group-item.my-1.rounded.shadow-sm.pointer aa
-      li.list-group-item.my-1.rounded.shadow-sm.pointer affa
-      li.list-group-item.my-1.rounded.shadow-sm.pointer afewf
-      li.list-group-item.my-1.rounded.shadow-sm.pointer aaa
 block vars
   include ./assets/pugs/_config.pug
   - var key = "top"
@@ -18,18 +9,30 @@ block header
     h2 #{page.title}
     h1=message
 block contents
-  -var sample = "test"
-    section#board.board.row
-
+  section#board.board.row
   include ./css/css.pug
   include ./include/_script.pug
-  p=test
+
   script.
-    var ccc = (data)=>{
+    var mounted = (data)=>{
+      var taskObj = {};
       data.TICKET_TYPE.forEach(el=>{
-        var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","") //タイトル
-        var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded")
+        taskObj[el.TICKET_TYPE_CODE] = [];
+        data.TICKETS.forEach(ticket=>{
+          if(ticket.TICKET_TYPE === el.ID){
+            (taskObj[el.TICKET_TYPE_CODE]).push(ticket);
+          }
+        });
+        var taskWrapEl = _createdElement("ul","","","list-group");
+        var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","");
+        var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded");
+
+        taskObj[el.TICKET_TYPE_CODE].forEach(task=>{
+            var taskEl = _createdElement("li",task.TICKET_NAME,"","list-group-item my-1 rounded shadow-sm pointer");
+            taskWrapEl.appendChild(taskEl);
+        })
+        sectionEl.appendChild(taskWrapEl)
         document.getElementById("board").appendChild(sectionEl);
       })
     }
-    ticketMounted(ccc);
+    ticketMounted(mounted);
