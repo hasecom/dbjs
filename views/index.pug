@@ -23,12 +23,16 @@ block contents
             (taskObj[el.TICKET_TYPE_CODE]).push(ticket);
           }
         });
-        var taskWrapEl = _createdElement("ul","","","list-group");
+        var taskWrapEl = _createdElement("ul","","taskWrap_"+el.TICKET_TYPE_CODE,"list-group task-wrap");
+        
+        taskWrapEl.addEventListener('drop',drop_handler);
+        taskWrapEl.addEventListener('dragover',dragover_handler);
         var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","");
         var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded");
-
         taskObj[el.TICKET_TYPE_CODE].forEach(task=>{
-            var taskEl = _createdElement("li",task.TICKET_NAME,"","list-group-item my-1 rounded shadow-sm pointer");
+            var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"list-group-item my-1 rounded shadow-sm pointer");
+            taskEl.setAttribute('draggable', true);
+            taskEl.addEventListener("dragstart", dragstart_handler);
             taskWrapEl.appendChild(taskEl);
         })
         sectionEl.appendChild(taskWrapEl)
@@ -36,3 +40,17 @@ block contents
       })
     }
     ticketMounted(mounted);
+
+    function dragstart_handler(ev) {
+      ev.dataTransfer.setData("text/plain", ev.target.id);
+      ev.dataTransfer.dropEffect = "move";
+    }
+    function dragover_handler(ev) {
+      ev.preventDefault();
+      ev.dataTransfer.dropEffect = "move"
+    }
+    function drop_handler(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text/plain");
+      ev.target.appendChild(document.getElementById(data));
+    }
