@@ -30,9 +30,12 @@ block contents
         var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","");
         var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded");
         taskObj[el.TICKET_TYPE_CODE].forEach(task=>{
-            var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"list-group-item my-1 rounded shadow-sm pointer");
+            var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"ticket list-group-item my-1 rounded shadow-sm pointer");
+            var updatedAt = _createdElement("div",task.UPDATED_AT,"","small text-right text-muted");
+            taskEl.appendChild(updatedAt)
             taskEl.setAttribute('draggable', true);
             taskEl.addEventListener("dragstart", dragstart_handler);
+            taskEl.addEventListener("dragend", dragend_handler);
             taskWrapEl.appendChild(taskEl);
         })
         sectionEl.appendChild(taskWrapEl)
@@ -42,8 +45,15 @@ block contents
     ticketMounted(mounted);
 
     function dragstart_handler(ev) {
-      ev.dataTransfer.setData("text/plain", ev.target.id);
+      var movingStyle = () => {
+        ev.target.style.opacity = "0"
+      }
+      setTimeout(movingStyle, 0.5);
+      ev.dataTransfer.setData("ticket", ev.target.id);
       ev.dataTransfer.dropEffect = "move";
+    }
+    function dragend_handler(ev) {
+      ev.target.style.opacity = "1"  
     }
     function dragover_handler(ev) {
       ev.preventDefault();
@@ -51,6 +61,7 @@ block contents
     }
     function drop_handler(ev) {
       ev.preventDefault();
-      var data = ev.dataTransfer.getData("text/plain");
+      var data = ev.dataTransfer.getData("ticket");
+      if(ev.target.nodeName == "LI") return false;
       ev.target.appendChild(document.getElementById(data));
     }
