@@ -39,6 +39,9 @@ block contents
             taskWrapEl.appendChild(taskEl);
         })
         sectionEl.appendChild(taskWrapEl)
+        var addCardEl = _createdElement("span","+さらにカードを追加","","text-right text-muted pointer");
+        addCardEl.addEventListener("click",function(){add_card(sectionEl)});
+        sectionEl.appendChild(_createdElement("div",addCardEl,"","text-right text-muted pointer"));
         document.getElementById("board").appendChild(sectionEl);
       })
     }
@@ -64,4 +67,9 @@ block contents
       var data = ev.dataTransfer.getData("ticket");
       if(ev.target.nodeName == "LI") return false;
       ev.target.appendChild(document.getElementById(data));
+    }
+
+    function add_card(el){
+      console.log(el)
+      console.log("clicked addCard Button")
     }
