@@ -9,6 +9,7 @@ block header
     h2 #{page.title}
     h1=message
 block contents
+  button aa
   section#board.board.row
   include ./css/css.pug
   include ./include/_script.pug
@@ -28,7 +29,7 @@ block contents
         taskWrapEl.addEventListener('drop',drop_handler);
         taskWrapEl.addEventListener('dragover',dragover_handler);
         var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","");
-        var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded");
+        var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded px-2 py-1");
         taskObj[el.TICKET_TYPE_CODE].forEach(task=>{
             var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"ticket list-group-item my-1 rounded shadow-sm pointer");
             var updatedAt = _createdElement("div",task.UPDATED_AT,"","small text-right text-muted");
@@ -40,8 +41,10 @@ block contents
         })
         sectionEl.appendChild(taskWrapEl)
         var addCardEl = _createdElement("span","+さらにカードを追加","","text-right text-muted pointer");
-        addCardEl.addEventListener("click",function(){add_card(sectionEl)});
-        sectionEl.appendChild(_createdElement("div",addCardEl,"","text-right text-muted pointer"));
+        var addCardWrapEl = _createdElement("div",addCardEl,"","text-right text-muted pointer")
+        addCardEl.addEventListener("click",function(e){add_card(sectionEl,addCardWrapEl,e)});
+        sectionEl.appendChild(addCardWrapEl);
+        sectionEl.setAttribute("data-cardcode",el.TICKET_TYPE_CODE);
         document.getElementById("board").appendChild(sectionEl);
       })
     }
@@ -69,7 +72,26 @@ block contents
       ev.target.appendChild(document.getElementById(data));
     }
 
-    function add_card(el){
-      console.log(el)
-      console.log("clicked addCard Button")
+    function add_card(parentEl,afterEl,e){
+      var addCardTextArea = _createdElement("textarea","","","list-card-composer-textarea");
+      addCardTextArea.setAttribute("placeholder","このカードにタイトルを入力");
+      var addCardButton = _createdElement("button","カードを追加","","btn btn-success");
+      var addCardTextAreaWrap = _createdElement("div",addCardTextArea,"","");
+      addCardButton.addEventListener("click",function(){saveCard()});
+      addCardButton.setAttribute("data-cardcode",parentEl.dataset.cardcode);
+      addCardTextAreaWrap.append(addCardButton);
+      addCardTextArea.addEventListener('blur',function(blurE){foucusoutTextArea(addCardTextAreaWrap,e,blurE,parentEl)});
+      parentEl.insertBefore(addCardTextAreaWrap,afterEl);
+      addCardTextArea.focus();
+      e.target.style.display = "none";
+    }
+    function foucusoutTextArea(textareaWrapEl,e,blurE,parentEl){
+      if(blurE.relatedTarget != null && parentEl.dataset.cardcode == blurE.relatedTarget.dataset.cardcode ){
+        return false;
+      }
+      textareaWrapEl.remove();
+      e.target.style.display = "block";
+    }
+    function saveCard(){
+      console.log("aaa")
     }
