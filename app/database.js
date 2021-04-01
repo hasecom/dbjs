@@ -24,4 +24,15 @@ module.exports = class Request{
                 })
         })
     }
+    static async insert(sql,params){
+      const db = DB.get()
+      return new Promise((resolve, reject) => {
+          db.serialize(() => {
+            db.run(sql, params, (err) => {
+            if (err) reject(err);
+            resolve();
+      })
+    })
+  })
+}
 }

@@ -9,8 +9,7 @@ block header
     h2 #{page.title}
     h1=message
 block contents
-  button aa
-  section#board.board.row
+  section#board.board.row.px-4
   include ./css/css.pug
   include ./include/_script.pug
 
@@ -41,7 +40,7 @@ block contents
         })
         sectionEl.appendChild(taskWrapEl)
         var addCardEl = _createdElement("span","+さらにカードを追加","","text-right text-muted pointer");
-        var addCardWrapEl = _createdElement("div",addCardEl,"","text-right text-muted pointer")
+        var addCardWrapEl = _createdElement("div",addCardEl,"","text-right text-muted pointer py-3")
         addCardEl.addEventListener("click",function(e){add_card(sectionEl,addCardWrapEl,e)});
         sectionEl.appendChild(addCardWrapEl);
         sectionEl.setAttribute("data-cardcode",el.TICKET_TYPE_CODE);
@@ -75,9 +74,10 @@ block contents
     function add_card(parentEl,afterEl,e){
       var addCardTextArea = _createdElement("textarea","","","list-card-composer-textarea");
       addCardTextArea.setAttribute("placeholder","このカードにタイトルを入力");
+      addCardTextArea.setAttribute("data-cardcode",parentEl.dataset.cardcode);
       var addCardButton = _createdElement("button","カードを追加","","btn btn-success");
       var addCardTextAreaWrap = _createdElement("div",addCardTextArea,"","");
-      addCardButton.addEventListener("click",function(){saveCard()});
+      addCardButton.addEventListener("click",function(){saveCard(addCardTextArea)});
       addCardButton.setAttribute("data-cardcode",parentEl.dataset.cardcode);
       addCardTextAreaWrap.append(addCardButton);
       addCardTextArea.addEventListener('blur',function(blurE){foucusoutTextArea(addCardTextAreaWrap,e,blurE,parentEl)});
@@ -92,6 +92,22 @@ block contents
       textareaWrapEl.remove();
       e.target.style.display = "block";
     }
-    function saveCard(){
-      console.log("aaa")
+    function saveCard(textAreaEl){
+      if(textAreaEl.value == ""){
+        textAreaEl.focus();
+        return false;
+      }
+      var json = {
+        "TICKET_NAME":textAreaEl.value,
+        "TICKET_MESSAGE":"",
+        "TICKET_TYPE":textAreaEl.dataset.cardcode,
+      }
+      var vv = ajaxPost(json,savedCard,"post/addcard");
+    }
+    var savedCard = (data) => {
+      var pareEl = document.getElementById('board');
+      while (pareEl.firstChild) {
+        pareEl.removeChild(pareEl.firstChild);
+      }
+      mounted(data);
     }

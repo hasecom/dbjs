@@ -1,6 +1,5 @@
 script.
   function ticketMounted(fnc){
-
       $.ajax({
         url: "get/mounted",
         type:"POST"
@@ -14,5 +13,20 @@ script.
               console.log(error)
             }
         );
+  }
+  function ajaxPost(rqData,fnc,url){
+    $.ajax({
+      url:url,
+      type:"POST",
+      data:rqData,
+      dataType: "json"
+    }).then(
+      function(data){
+        fnc(data);
+      },
+      function(error){
+        console.log(error)
+      }
+    )
   }
   

@@ -1,9 +1,14 @@
 const express = require('express')
 const app = express()
 const db = require("./app/database.js");
+
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
+
 app.set("view engine", "pug")
 app.get('/', (req, res) => { 
-  res.render("index",{title:"index",message:"hello there"}) 
+  res.render("index",{title:"index",message:"hello a  there"}) 
 });
 
 
@@ -19,9 +24,22 @@ app.post('/get/mounted', async(req, res) => {
 
 //テーブル確認 PRAGMA TABLE_INFO("table name")
 
+app.post('/post/addcard',async(req,res) => {
+  var reqArr = [];
+  for (const item in req.body) {
+    if (Object.hasOwnProperty.call(req.body,item)) {
+        reqArr.push(req.body[item]);
+    }
+  }
+  var sql = "INSERT INTO TICKETS(ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,UPDATED_AT,CREATED_AT) VALUES(NULL,?,?,?,NULL,NULL)";
+  await db.insert(sql,reqArr);
 
-app.get('/api',(req,res) => {
-  res.write("{aaa}");
+  var ticket_type = await db.select("SELECT ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE FROM TICKET_TYPE");
+  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,UPDATED_AT,CREATED_AT FROM TICKETS");
+  res.send({
+    "TICKET_TYPE":ticket_type,
+    "TICKETS":tickets
+  });
   res.end();
 });
 
@@ -58,4 +76,4 @@ app.get('/createtables',(req, res)=>{
   db.close();
 });
 
-app.listen(8000, () => console.log('app listening on port 8000!'))
+app.listen(8080, () => console.log('app listening on port 8080!'))
