@@ -14,8 +14,10 @@ block contents
   include ./include/_script.pug
 
   script.
+    var TICKET_TYPE_OBJECT;
     var mounted = (data)=>{
       var taskObj = {};
+      TICKET_TYPE_OBJECT = data.TICKET_TYPE;
       data.TICKET_TYPE.forEach(el=>{
         taskObj[el.TICKET_TYPE_CODE] = [];
         data.TICKETS.forEach(ticket=>{
@@ -24,7 +26,7 @@ block contents
           }
         });
         var taskWrapEl = _createdElement("ul","","taskWrap_"+el.TICKET_TYPE_CODE,"list-group task-wrap");
-        
+        taskWrapEl.setAttribute("data-cardcode",el.TICKET_TYPE_CODE);
         taskWrapEl.addEventListener('drop',drop_handler);
         taskWrapEl.addEventListener('dragover',dragover_handler);
         var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","");
@@ -33,6 +35,10 @@ block contents
             var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"ticket list-group-item my-1 rounded shadow-sm pointer");
             var updatedAt = _createdElement("div",task.UPDATED_AT,"","small text-right text-muted");
             taskEl.appendChild(updatedAt)
+            taskEl.setAttribute('data-taskid',task.ID);
+            taskEl.setAttribute('data-order',task.TICKET_ORDER);
+            taskEl.setAttribute('data-ticketname',task.TICKET_NAME);
+            taskEl.setAttribute('data-ticketmessage',task.TICKET_MESSAGE);
             taskEl.setAttribute('draggable', true);
             taskEl.addEventListener("dragstart", dragstart_handler);
             taskEl.addEventListener("dragend", dragend_handler);
@@ -58,7 +64,8 @@ block contents
       ev.dataTransfer.dropEffect = "move";
     }
     function dragend_handler(ev) {
-      ev.target.style.opacity = "1"  
+      ev.target.style.opacity = "1" 
+      moveCard();
     }
     function dragover_handler(ev) {
       ev.preventDefault();
@@ -101,8 +108,9 @@ block contents
         "TICKET_NAME":textAreaEl.value,
         "TICKET_MESSAGE":"",
         "TICKET_TYPE":textAreaEl.dataset.cardcode,
+        "TICKET_ORDER":document.getElementById('taskWrap_'+textAreaEl.dataset.cardcode).childElementCount+1
       }
-      var vv = ajaxPost(json,savedCard,"post/addcard");
+      ajaxPost(json,savedCard,"post/addcard");
     }
     var savedCard = (data) => {
       var pareEl = document.getElementById('board');
@@ -110,4 +118,29 @@ block contents
         pareEl.removeChild(pareEl.firstChild);
       }
       mounted(data);
+    }
+
+    function moveCard(){
+      var json = {};
+      TICKET_TYPE_OBJECT.forEach(function(item){
+        var parentEl = document.getElementById("taskWrap_"+item.TICKET_TYPE_CODE);
+        var cardcord = item.TICKET_TYPE_CODE;
+        Object.keys(parentEl.children).forEach(function (key,cnt) {
+          var ticketname = parentEl.children[key].dataset.ticketname;
+          var ticketmessage = parentEl.children[key].dataset.ticketmessage;
+          var ticketorder = parentEl.children[key].dataset.order;
+          var ticketid = parentEl.children[key].dataset.ticketid;
+          json[cnt] = {
+            "ID":ticketid,
+            "TICKET_NAME":ticketname,
+            "TICKET_MESSAGE":ticketmessage,
+            "TICKET_ORDER":ticketorder,
+            "TICKET_TYPE":cardcord
+          }
+        });
+      });
+      ajaxPost(json,updatedCard,"post/updatecard");
+    }
+    var updatedCard = (data) => {
+      console.log(data);
     }

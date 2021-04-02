@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 
 app.post('/get/mounted', async(req, res) => {
   var ticket_type = await db.select("SELECT ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE FROM TICKET_TYPE");
-  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,UPDATED_AT,CREATED_AT FROM TICKETS");
+  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT FROM TICKETS");
   res.send({
     "TICKET_TYPE":ticket_type,
     "TICKETS":tickets
@@ -31,15 +31,27 @@ app.post('/post/addcard',async(req,res) => {
         reqArr.push(req.body[item]);
     }
   }
-  var sql = "INSERT INTO TICKETS(ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,UPDATED_AT,CREATED_AT) VALUES(NULL,?,?,?,NULL,NULL)";
+  var sql = "INSERT INTO TICKETS(ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT) VALUES(NULL,?,?,?,?,NULL,NULL)";
   await db.insert(sql,reqArr);
 
   var ticket_type = await db.select("SELECT ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE FROM TICKET_TYPE");
-  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,UPDATED_AT,CREATED_AT FROM TICKETS");
+  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT FROM TICKETS");
   res.send({
     "TICKET_TYPE":ticket_type,
-    "TICKETS":tickets
+    "TICKETS":tickets,
   });
+  res.end();
+});
+
+app.post('/post/updatecard',async(req,res) => {
+  var reqArr = [];
+  for (const item in req.body) {
+    if (Object.hasOwnProperty.call(req.body,item)) {
+        reqArr.push(req.body[item]);
+    }
+  }
+  console.log(reqArr);
+  res.send("a");
   res.end();
 });
 
