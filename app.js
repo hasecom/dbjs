@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 
 app.post('/get/mounted', async(req, res) => {
   var ticket_type = await db.select("SELECT ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE FROM TICKET_TYPE");
-  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT FROM TICKETS");
+  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT FROM TICKETS ORDER BY TICKET_ORDER");
   res.send({
     "TICKET_TYPE":ticket_type,
     "TICKETS":tickets
@@ -35,7 +35,7 @@ app.post('/post/addcard',async(req,res) => {
   await db.insert(sql,reqArr);
 
   var ticket_type = await db.select("SELECT ID,TICKET_TYPE_NAME,TICKET_TYPE_CODE FROM TICKET_TYPE");
-  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT FROM TICKETS");
+  var tickets = await db.select("SELECT ID,TICKET_NAME,TICKET_MESSAGE,TICKET_TYPE,TICKET_ORDER,UPDATED_AT,CREATED_AT FROM TICKETS  ORDER BY TICKET_ORDER");
   res.send({
     "TICKET_TYPE":ticket_type,
     "TICKETS":tickets,
@@ -50,7 +50,17 @@ app.post('/post/updatecard',async(req,res) => {
         reqArr.push(req.body[item]);
     }
   }
-  console.log(reqArr);
+  for await(item of reqArr) {
+    var sql = "UPDATE TICKETS SET TICKET_NAME = ?, TICKET_MESSAGE = ?, TICKET_TYPE = ?, TICKET_ORDER = ? WHERE ID = ?";
+    await db.update(sql,[
+      item.TICKET_NAME,
+      item.TICKET_MESSAGE,
+      item.TICKET_TYPE,
+      item.TICKET_ORDER,
+      item.ID
+    ]);
+  }
+
   res.send("a");
   res.end();
 });

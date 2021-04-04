@@ -32,7 +32,7 @@ block contents
         var titleEl = _createdElement("h3",el.TICKET_TYPE_NAME,"","");
         var sectionEl = _createdElement("div",titleEl,"","col-4 ticket-table bg-light border mx-1 rounded px-2 py-1");
         taskObj[el.TICKET_TYPE_CODE].forEach(task=>{
-            var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"ticket list-group-item my-1 rounded shadow-sm pointer");
+            var taskEl = _createdElement("li",task.TICKET_NAME,"task_"+task.ID,"ticket list-group-item my-2 rounded shadow-sm pointer");
             var updatedAt = _createdElement("div",task.UPDATED_AT,"","small text-right text-muted");
             taskEl.appendChild(updatedAt)
             taskEl.setAttribute('data-taskid',task.ID);
@@ -46,7 +46,7 @@ block contents
         })
         sectionEl.appendChild(taskWrapEl)
         var addCardEl = _createdElement("span","+さらにカードを追加","","text-right text-muted pointer");
-        var addCardWrapEl = _createdElement("div",addCardEl,"","text-right text-muted pointer py-3")
+        var addCardWrapEl = _createdElement("div",addCardEl,"","text-right text-muted pointer py-3 task-menu")
         addCardEl.addEventListener("click",function(e){add_card(sectionEl,addCardWrapEl,e)});
         sectionEl.appendChild(addCardWrapEl);
         sectionEl.setAttribute("data-cardcode",el.TICKET_TYPE_CODE);
@@ -58,24 +58,45 @@ block contents
     function dragstart_handler(ev) {
       var movingStyle = () => {
         ev.target.style.opacity = "0"
+        ev.target.style.display = "none"
       }
-      setTimeout(movingStyle, 0.5);
+      setTimeout(movingStyle, 1.5);
       ev.dataTransfer.setData("ticket", ev.target.id);
       ev.dataTransfer.dropEffect = "move";
     }
     function dragend_handler(ev) {
       ev.target.style.opacity = "1" 
+      ev.target.style.display = "block" 
       moveCard();
     }
+    var applyMarginEl;
     function dragover_handler(ev) {
       ev.preventDefault();
+      if(ev.target.nodeName == "LI"){
+          var pareEl = document.getElementsByClassName("ticket");
+          for(i=0;i<pareEl.length;i++){
+            pareEl[i].style.cssText += 'margin-top: .5rem!important';
+          }
+          ev.target.style.cssText += 'margin-top:'+ev.target.clientHeight + 'px !important;';  
+          applyMarginEl = ev.target;
+      }
       ev.dataTransfer.dropEffect = "move"
     }
     function drop_handler(ev) {
       ev.preventDefault();
       var data = ev.dataTransfer.getData("ticket");
-      if(ev.target.nodeName == "LI") return false;
-      ev.target.appendChild(document.getElementById(data));
+      var pareEl = document.getElementsByClassName("ticket");
+      for(i=0;i<pareEl.length;i++){
+        pareEl[i].style.cssText = 'margin-top: .5rem!important';
+      }
+      if(ev.target.nodeName != "UL"){
+        return false
+      };
+      if(ev.target.children.length < 1){
+         ev.target.appendChild(document.getElementById(data));
+      }else{
+       ev.target.insertBefore(document.getElementById(data),applyMarginEl);
+      }
     }
 
     function add_card(parentEl,afterEl,e){
@@ -122,25 +143,27 @@ block contents
 
     function moveCard(){
       var json = {};
+      var i = 0;
       TICKET_TYPE_OBJECT.forEach(function(item){
         var parentEl = document.getElementById("taskWrap_"+item.TICKET_TYPE_CODE);
         var cardcord = item.TICKET_TYPE_CODE;
-        Object.keys(parentEl.children).forEach(function (key,cnt) {
+        Object.keys(parentEl.children).forEach(function (key) {
           var ticketname = parentEl.children[key].dataset.ticketname;
           var ticketmessage = parentEl.children[key].dataset.ticketmessage;
-          var ticketorder = parentEl.children[key].dataset.order;
-          var ticketid = parentEl.children[key].dataset.ticketid;
-          json[cnt] = {
+          var ticketorder = Number(key) + 1;
+          var ticketid = parentEl.children[key].dataset.taskid;
+          json[i] = {
             "ID":ticketid,
             "TICKET_NAME":ticketname,
             "TICKET_MESSAGE":ticketmessage,
             "TICKET_ORDER":ticketorder,
             "TICKET_TYPE":cardcord
           }
+          i++;
         });
       });
       ajaxPost(json,updatedCard,"post/updatecard");
     }
     var updatedCard = (data) => {
-      console.log(data);
+      
     }
