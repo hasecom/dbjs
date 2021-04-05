@@ -8,7 +8,7 @@ app.use(bodyParser.json())
 
 app.set("view engine", "pug")
 app.get('/', (req, res) => { 
-  res.render("index",{title:"index",message:"hello a  there"}) 
+  res.render("index",{title:"index",message:"タスクビュー"}) 
 });
 
 
